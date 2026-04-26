@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -26,6 +27,7 @@ import {
   Tooltip,
   Menu,
   MenuItem,
+  Divider,
   alpha,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
@@ -39,6 +41,7 @@ import { parseISO } from 'date-fns';
 import { parteienApi } from '../../api/parteien';
 import { faelleApi } from '../../api/faelle';
 import type { Fall, Partei, ParteienTyp } from '../../types';
+import { sammleVerkehrsParteiIds } from '../../utils/verkehrsParteienHelpers';
 import ParteiDialog from '../../components/ParteiDialog/ParteiDialog';
 
 const TYP_COLORS: Record<ParteienTyp, 'default' | 'info' | 'warning' | 'error' | 'secondary' | 'primary'> = {
@@ -61,7 +64,7 @@ const TYP_ORDER: ParteienTyp[] = ['gutachter', 'werkstatt', 'versicherung', 'geg
 
 type SortKey = 'name' | 'typ' | 'email' | 'ort' | 'referenzen' | 'erstelltAm';
 
-type FilterGruppe = 'alle' | 'kfz' | 'prozess';
+type FilterGruppe = 'alle' | ParteienTyp;
 
 const KFZ_TYP: ParteienTyp[] = ['gutachter', 'werkstatt', 'versicherung'];
 const PROZESS_TYP: ParteienTyp[] = ['gegenseite', 'gericht'];
@@ -85,8 +88,7 @@ function faelleReferenzenProPartei(faelle: Fall[]): Map<string, number> {
   const map = new Map<string, number>();
   for (const f of faelle) {
     if (f.verkehrsrecht) {
-      const vr = f.verkehrsrecht;
-      for (const id of [vr.gutachterId, vr.werkstattId, vr.versicherungId].filter(Boolean) as string[]) {
+      for (const id of sammleVerkehrsParteiIds(f.verkehrsrecht)) {
         map.set(id, (map.get(id) ?? 0) + 1);
       }
     }
@@ -102,8 +104,7 @@ function faelleReferenzenProPartei(faelle: Fall[]): Map<string, number> {
 
 function matchesGruppe(p: Partei, g: FilterGruppe): boolean {
   if (g === 'alle') return true;
-  if (g === 'kfz') return KFZ_TYP.includes(p.typ);
-  return PROZESS_TYP.includes(p.typ);
+  return p.typ === g;
 }
 
 const CARD_SHADOW = '0 8px 32px rgba(12, 15, 16, 0.06)';
@@ -129,6 +130,7 @@ function MiniSparkline({ value }: { value: number }) {
 }
 
 export default function Parteien() {
+  const navigate = useNavigate();
   const [parteien, setParteien] = useState<Partei[]>([]);
   const [faelle, setFaelle] = useState<Fall[]>([]);
   const [loading, setLoading] = useState(true);
@@ -141,6 +143,7 @@ export default function Parteien() {
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const [menuPartei, setMenuPartei] = useState<Partei | null>(null);
+  const [editPartei, setEditPartei] = useState<Partei | null>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -245,6 +248,13 @@ export default function Parteien() {
   const handleMenuClose = () => {
     setMenuAnchor(null);
     setMenuPartei(null);
+  };
+
+  const handleLoeschen = async () => {
+    if (!menuPartei) return;
+    handleMenuClose();
+    await parteienApi.delete(menuPartei.id);
+    setParteien((prev) => prev.filter((p) => p.id !== menuPartei.id));
   };
 
   const metaZeile = (p: Partei) => {
@@ -382,7 +392,7 @@ export default function Parteien() {
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems={{ xs: 'stretch', md: 'center' }} justifyContent="space-between">
           <Stack direction="row" alignItems="center" spacing={1} sx={{ color: 'text.secondary' }}>
             <FilterListIcon fontSize="small" />
-            <Typography variant="body2">Filter nach Rolle</Typography>
+            <Typography variant="body2">Typ</Typography>
           </Stack>
           <ToggleButtonGroup
             size="small"
@@ -395,15 +405,32 @@ export default function Parteien() {
               }
             }}
             sx={{
-              bgcolor: 'jurist.surfaceContainerLow',
-              borderRadius: 999,
-              p: 0.5,
-              '& .MuiToggleButton-root': { border: 'none', borderRadius: 999, px: 2 },
+              flexWrap: 'wrap',
+              gap: 0.5,
+              '& .MuiToggleButton-root': {
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: '999px !important',
+                px: 1.75,
+                py: 0.5,
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                textTransform: 'none',
+                '&.Mui-selected': {
+                  color: 'primary.contrastText',
+                  bgcolor: 'primary.main',
+                  borderColor: 'primary.main',
+                  '&:hover': { bgcolor: 'primary.dark' },
+                },
+              },
             }}
           >
             <ToggleButton value="alle">Alle</ToggleButton>
-            <ToggleButton value="kfz">Kfz & Schaden</ToggleButton>
-            <ToggleButton value="prozess">Prozess</ToggleButton>
+            <ToggleButton value="versicherung">Versicherung</ToggleButton>
+            <ToggleButton value="gutachter">Gutachter</ToggleButton>
+            <ToggleButton value="werkstatt">Werkstatt</ToggleButton>
+            <ToggleButton value="gegenseite">Gegenseite</ToggleButton>
+            <ToggleButton value="gericht">Gericht</ToggleButton>
           </ToggleButtonGroup>
         </Stack>
       </Paper>
@@ -491,7 +518,7 @@ export default function Parteien() {
                 : zeige.map((p) => {
                     const n = refProPartei.get(p.id) ?? 0;
                     return (
-                      <TableRow key={p.id} hover sx={{ cursor: 'default' }}>
+                      <TableRow key={p.id} hover sx={{ cursor: 'pointer' }} onClick={() => navigate(`/parteien/${p.id}`)}>
                         <TableCell>
                           <Stack direction="row" alignItems="center" spacing={1.5}>
                             <Avatar sx={{ width: 40, height: 40, bgcolor: 'primary.main', fontSize: '0.85rem' }}>
@@ -597,6 +624,23 @@ export default function Parteien() {
       </Paper>
 
       <Menu anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClose={handleMenuClose}>
+        <MenuItem
+          onClick={() => {
+            navigate(`/parteien/${menuPartei?.id}`);
+            handleMenuClose();
+          }}
+        >
+          Details anzeigen
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            setEditPartei(menuPartei);
+            handleMenuClose();
+          }}
+        >
+          Bearbeiten
+        </MenuItem>
+        {(menuPartei?.email || menuPartei?.telefon) && <Divider />}
         {menuPartei?.email && (
           <MenuItem
             component="a"
@@ -615,15 +659,37 @@ export default function Parteien() {
             Anrufen
           </MenuItem>
         )}
-        {!menuPartei?.email && !menuPartei?.telefon && (
-          <MenuItem disabled>Kein Kontakt hinterlegt</MenuItem>
-        )}
+        <Divider />
+        <Tooltip
+          title={menuPartei && (refProPartei.get(menuPartei.id) ?? 0) > 0 ? 'Partei ist Fällen zugeordnet und kann nicht gelöscht werden' : ''}
+          placement="left"
+        >
+          <span>
+            <MenuItem
+              onClick={handleLoeschen}
+              disabled={menuPartei ? (refProPartei.get(menuPartei.id) ?? 0) > 0 : false}
+              sx={{ color: 'error.main' }}
+            >
+              Löschen
+            </MenuItem>
+          </span>
+        </Tooltip>
       </Menu>
 
       <ParteiDialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
         onSaved={(neu) => setParteien((prev) => [...prev, neu])}
+      />
+
+      <ParteiDialog
+        open={editPartei !== null}
+        partei={editPartei ?? undefined}
+        onClose={() => setEditPartei(null)}
+        onSaved={(updated) => {
+          setParteien((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
+          setEditPartei(null);
+        }}
       />
     </Box>
   );

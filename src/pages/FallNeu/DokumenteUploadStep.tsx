@@ -21,6 +21,8 @@ import type { DateiKategorie } from '../../store/dokumenteStore';
 const KATEGORIE_LABELS: Record<DateiKategorie, string> = {
   gutachten: 'Gutachten',
   rechnung: 'Rechnung',
+  rechnung_werkstatt: 'Rechnung Werkstatt',
+  messwerk: 'Messwerk',
   foto: 'Foto / Bild',
   sonstiges: 'Sonstiges',
 };

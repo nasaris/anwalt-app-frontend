@@ -4,7 +4,7 @@
  * DSGVO-Hinweis: Diese Funktionen verarbeiten nur Datumswerte, keine Personendaten.
  */
 
-import { differenceInDays, addMonths, addWeeks, isAfter, isBefore, parseISO } from 'date-fns';
+import { differenceInDays, addWeeks, parseISO } from 'date-fns';
 
 /**
  * Berechnet das Ende der 3-Wochen-Frist nach § 4 KSchG
@@ -12,13 +12,6 @@ import { differenceInDays, addMonths, addWeeks, isAfter, isBefore, parseISO } fr
  */
 export function berechneKSchGFrist(kuendigungsdatum: string): Date {
   return addWeeks(parseISO(kuendigungsdatum), 3);
-}
-
-/**
- * Berechnet das Ende der LAG-Berufungsfrist (1 Monat ab Urteilszustellung).
- */
-export function berechneLAGBerufungsfrist(urteilsdatum: string): Date {
-  return addMonths(parseISO(urteilsdatum), 1);
 }
 
 /**
@@ -40,22 +33,6 @@ export function fristDringlichkeit(fristEnde: string): FristDringlichkeit {
   if (tage <= 3) return 'kritisch';
   if (tage <= 7) return 'warnung';
   return 'normal';
-}
-
-/**
- * Prüft ob eine Frist heute fällig ist oder überschritten wurde.
- */
-export function istFristFaellig(fristEnde: string): boolean {
-  return !isAfter(parseISO(fristEnde), new Date());
-}
-
-/**
- * Prüft ob eine Wiedervorlage in den nächsten N Tagen fällig wird.
- */
-export function istBaldFaellig(datum: string, tage = 7): boolean {
-  const d = parseISO(datum);
-  const heute = new Date();
-  return isAfter(d, heute) && isBefore(d, new Date(Date.now() + tage * 86400000));
 }
 
 /**

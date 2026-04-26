@@ -24,6 +24,10 @@ export interface KanzleiDaten {
   anwaltTelefon?: string;     // direkte Durchwahl
   zulassungsnummer?: string;  // Zulassungsnummer Rechtsanwaltskammer
   spezialisierungen?: string[]; // z.B. ["Verkehrsrecht", "Arbeitsrecht"]
+  /** Briefkopf (PDF): ÖPNV-Linien, z. B. „58, 68, 132“ */
+  briefkopfOepnvLinien?: string;
+  /** Briefkopf (PDF): Haltestelle, z. B. „(Haltestelle Baldeplatz)“ */
+  briefkopfOepnvHaltestelle?: string;
 }
 
 const DEFAULTS: KanzleiDaten = {

@@ -24,6 +24,7 @@ import { mandantenApi } from '../../api/mandanten';
 import { parteienApi } from '../../api/parteien';
 import type { Mandant, Partei } from '../../types';
 import { berechneKSchGFrist } from '../../utils/fristBerechnung';
+import { AKTENZEICHEN_AUTO_HINT, naechstesAktenzeichen } from '../../utils/aktenzeichenVergabe';
 
 const FALLTYPEN = [
   { value: 'kuendigung', label: 'Kündigung — 3-Wochen-Frist § 4 KSchG!' },
@@ -78,6 +79,23 @@ export default function ArbeitsrechtForm({ onBack, onSaved }: Props) {
     parteienApi.getAll('gegenseite').then(setGegenseiten);
     parteienApi.getAll('gericht').then(setGerichte);
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    faelleApi
+      .getAll()
+      .then((faelle) => {
+        if (cancelled) return;
+        const az = faelle.map((f) => f.aktenzeichen);
+        setValue('aktenzeichen', naechstesAktenzeichen(az, 'arbeitsrecht'));
+      })
+      .catch(() => {
+        if (!cancelled) setValue('aktenzeichen', naechstesAktenzeichen([], 'arbeitsrecht'));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [setValue]);
 
   const falltyp = watch('falltyp');
   const rsv = watch('rsv');
@@ -158,8 +176,9 @@ export default function ArbeitsrechtForm({ onBack, onSaved }: Props) {
               fullWidth
               {...register('aktenzeichen')}
               error={!!errors.aktenzeichen}
-              helperText={errors.aktenzeichen?.message ?? 'z.B. AR/2025/010'}
+              helperText={errors.aktenzeichen?.message ?? AKTENZEICHEN_AUTO_HINT}
               required
+              InputProps={{ readOnly: true }}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
@@ -340,11 +359,12 @@ export default function ArbeitsrechtForm({ onBack, onSaved }: Props) {
 
           <Grid size={{ xs: 12 }}>
             <TextField
-              label="Notizen"
+              label="Fallaktivität — erste Notiz"
               multiline
               rows={3}
               fullWidth
               {...register('notizen')}
+              helperText="Interne Notiz zum Fall — erscheint in der Chronik auf der Falldetailseite."
             />
           </Grid>
         </Grid>

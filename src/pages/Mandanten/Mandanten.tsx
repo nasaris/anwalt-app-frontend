@@ -126,6 +126,9 @@ export default function Mandanten() {
     for (const fa of faelle) {
       if (fa.status !== 'aktiv') continue;
       map.set(fa.mandantId, (map.get(fa.mandantId) ?? 0) + 1);
+      for (const wid of fa.weitereMandantenIds ?? []) {
+        map.set(wid, (map.get(wid) ?? 0) + 1);
+      }
     }
     return map;
   }, [faelle]);

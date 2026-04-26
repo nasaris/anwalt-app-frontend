@@ -19,10 +19,16 @@ import {
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import WorkIcon from '@mui/icons-material/Work';
 import BalanceIcon from '@mui/icons-material/Balance';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import GavelIcon from '@mui/icons-material/Gavel';
+import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
 import type { Rechtsgebiet } from '../../types';
 import VerkehrsrechtForm from './VerkehrsrechtForm';
 import ArbeitsrechtForm from './ArbeitsrechtForm';
 import ZivilrechtForm from './ZivilrechtForm';
+import InsolvenzrechtForm from './InsolvenzrechtForm';
+import WettbewerbsrechtForm from './WettbewerbsrechtForm';
+import ErbrechtForm from './ErbrechtForm';
 import DokumenteUploadStep, { type PendingFile } from './DokumenteUploadStep';
 import { useDokumenteStore } from '../../store/dokumenteStore';
 
@@ -105,18 +111,19 @@ export default function FallNeu() {
                 p: 3,
                 flexDirection: 'column',
                 gap: 1,
-                minWidth: 180,
+                minWidth: 160,
+                borderRadius: '12px !important',
                 border: '2px solid !important',
                 borderColor:
                   rechtsgebiet === 'verkehrsrecht' ? 'primary.main !important' : 'grey.300 !important',
               }}
             >
-              <DirectionsCarIcon sx={{ fontSize: 40 }} color="info" />
+              <DirectionsCarIcon sx={{ fontSize: 36 }} color="info" />
               <Typography variant="subtitle1" fontWeight={600}>
                 Verkehrsrecht
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                Schadensersatz nach Verkehrsunfall
+                Schadensersatz nach Unfall
               </Typography>
             </ToggleButton>
             <ToggleButton
@@ -125,18 +132,19 @@ export default function FallNeu() {
                 p: 3,
                 flexDirection: 'column',
                 gap: 1,
-                minWidth: 180,
+                minWidth: 160,
+                borderRadius: '12px !important',
                 border: '2px solid !important',
                 borderColor:
                   rechtsgebiet === 'arbeitsrecht' ? 'secondary.main !important' : 'grey.300 !important',
               }}
             >
-              <WorkIcon sx={{ fontSize: 40 }} color="secondary" />
+              <WorkIcon sx={{ fontSize: 36 }} color="secondary" />
               <Typography variant="subtitle1" fontWeight={600}>
                 Arbeitsrecht
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                Kündigung, Abmahnung, Lohn u.v.m.
+                Kündigung, Abmahnung, Lohn
               </Typography>
             </ToggleButton>
             <ToggleButton
@@ -145,18 +153,82 @@ export default function FallNeu() {
                 p: 3,
                 flexDirection: 'column',
                 gap: 1,
-                minWidth: 180,
+                minWidth: 160,
+                borderRadius: '12px !important',
                 border: '2px solid !important',
                 borderColor:
                   rechtsgebiet === 'zivilrecht' ? 'success.main !important' : 'grey.300 !important',
               }}
             >
-              <BalanceIcon sx={{ fontSize: 40, color: rechtsgebiet === 'zivilrecht' ? 'success.main' : 'action.active' }} />
+              <BalanceIcon sx={{ fontSize: 36, color: 'success.main' }} />
               <Typography variant="subtitle1" fontWeight={600}>
                 Zivilrecht
               </Typography>
               <Typography variant="caption" color="text.secondary">
                 Forderungen, Verträge, Klage
+              </Typography>
+            </ToggleButton>
+            <ToggleButton
+              value="insolvenzrecht"
+              sx={{
+                p: 3,
+                flexDirection: 'column',
+                gap: 1,
+                minWidth: 160,
+                borderRadius: '12px !important',
+                border: '2px solid !important',
+                borderColor:
+                  rechtsgebiet === 'insolvenzrecht' ? 'warning.main !important' : 'grey.300 !important',
+              }}
+            >
+              <AccountBalanceIcon sx={{ fontSize: 36, color: 'warning.main' }} />
+              <Typography variant="subtitle1" fontWeight={600}>
+                Insolvenzrecht
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Forderungsanmeldung, Verfahren
+              </Typography>
+            </ToggleButton>
+            <ToggleButton
+              value="wettbewerbsrecht"
+              sx={{
+                p: 3,
+                flexDirection: 'column',
+                gap: 1,
+                minWidth: 160,
+                borderRadius: '12px !important',
+                border: '2px solid !important',
+                borderColor:
+                  rechtsgebiet === 'wettbewerbsrecht' ? 'error.main !important' : 'grey.300 !important',
+              }}
+            >
+              <GavelIcon sx={{ fontSize: 36, color: 'error.main' }} />
+              <Typography variant="subtitle1" fontWeight={600}>
+                Wettbewerbsrecht
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Abmahnung, einstw. Verfügung
+              </Typography>
+            </ToggleButton>
+            <ToggleButton
+              value="erbrecht"
+              sx={{
+                p: 3,
+                flexDirection: 'column',
+                gap: 1,
+                minWidth: 160,
+                borderRadius: '12px !important',
+                border: '2px solid !important',
+                borderColor:
+                  rechtsgebiet === 'erbrecht' ? 'info.dark !important' : 'grey.300 !important',
+              }}
+            >
+              <FamilyRestroomIcon sx={{ fontSize: 36, color: 'primary.dark' }} />
+              <Typography variant="subtitle1" fontWeight={600}>
+                Erbrecht
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Pflichtteil, Testament, Erbschein
               </Typography>
             </ToggleButton>
           </ToggleButtonGroup>
@@ -187,12 +259,21 @@ export default function FallNeu() {
         />
       )}
 
-      {/* Schritt 1 (AR/ZR) / Schritt 2 (VR) — Falldetails */}
+      {/* Schritt 1 (AR/ZR/IR/WB/ER) / Schritt 2 (VR) — Falldetails */}
       {activeStep === 1 && rechtsgebiet === 'arbeitsrecht' && (
         <ArbeitsrechtForm onBack={() => setActiveStep(0)} onSaved={handleSaved} />
       )}
       {activeStep === 1 && rechtsgebiet === 'zivilrecht' && (
         <ZivilrechtForm onBack={() => setActiveStep(0)} onSaved={handleSaved} />
+      )}
+      {activeStep === 1 && rechtsgebiet === 'insolvenzrecht' && (
+        <InsolvenzrechtForm onBack={() => setActiveStep(0)} onSaved={handleSaved} />
+      )}
+      {activeStep === 1 && rechtsgebiet === 'wettbewerbsrecht' && (
+        <WettbewerbsrechtForm onBack={() => setActiveStep(0)} onSaved={handleSaved} />
+      )}
+      {activeStep === 1 && rechtsgebiet === 'erbrecht' && (
+        <ErbrechtForm onBack={() => setActiveStep(0)} onSaved={handleSaved} />
       )}
       {activeStep === 2 && rechtsgebiet === 'verkehrsrecht' && (
         <VerkehrsrechtForm onBack={() => setActiveStep(1)} onSaved={handleSaved} />

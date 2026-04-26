@@ -24,6 +24,7 @@ import { faelleApi } from '../../api/faelle';
 import { mandantenApi } from '../../api/mandanten';
 import type { Mandant } from '../../types';
 import MandantDialog from '../../components/MandantDialog/MandantDialog';
+import { AKTENZEICHEN_AUTO_HINT, naechstesAktenzeichen } from '../../utils/aktenzeichenVergabe';
 
 const FALLTYP_OPTIONEN = [
   { value: 'vertrag',      label: 'Vertragsdurchsetzung / -streitigkeit' },
@@ -82,6 +83,23 @@ export default function ZivilrechtForm({ onBack, onSaved }: Props) {
     mandantenApi.getAll().then((m) => setMandanten(Array.isArray(m) ? m : []));
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+    faelleApi
+      .getAll()
+      .then((faelle) => {
+        if (cancelled) return;
+        const az = faelle.map((f) => f.aktenzeichen);
+        setValue('aktenzeichen', naechstesAktenzeichen(az, 'zivilrecht'));
+      })
+      .catch(() => {
+        if (!cancelled) setValue('aktenzeichen', naechstesAktenzeichen([], 'zivilrecht'));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [setValue]);
+
   const selectedMandantId = watch('mandantId');
   const selectedMandant = mandanten.find((m) => m.id === selectedMandantId);
 
@@ -127,8 +145,9 @@ export default function ZivilrechtForm({ onBack, onSaved }: Props) {
               fullWidth
               {...register('aktenzeichen')}
               error={!!errors.aktenzeichen}
-              helperText={errors.aktenzeichen?.message ?? 'z.B. ZR/2025/001'}
+              helperText={errors.aktenzeichen?.message ?? AKTENZEICHEN_AUTO_HINT}
               required
+              InputProps={{ readOnly: true }}
             />
           </Grid>
 
@@ -258,12 +277,12 @@ export default function ZivilrechtForm({ onBack, onSaved }: Props) {
 
           <Grid size={{ xs: 12 }}>
             <TextField
-              label="Notizen"
+              label="Fallaktivität — erste Notiz"
               multiline
               rows={3}
               fullWidth
               {...register('notizen')}
-              helperText="Interne Notizen zum Fall"
+              helperText="Interne Notiz zum Fall — erscheint in der Chronik auf der Falldetailseite."
             />
           </Grid>
         </Grid>

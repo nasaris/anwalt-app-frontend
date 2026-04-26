@@ -37,7 +37,11 @@ export default function MandantenDetail() {
     if (!id) return;
     Promise.all([mandantenApi.getById(id), faelleApi.getAll()]).then(([m, alle]) => {
       setMandant(m);
-      setFaelle(alle.filter((f) => f.mandantId === id));
+      setFaelle(
+        alle.filter(
+          (f) => f.mandantId === id || (f.weitereMandantenIds?.includes(id) ?? false),
+        ),
+      );
       setLoading(false);
     });
   }, [id]);
@@ -121,6 +125,7 @@ export default function MandantenDetail() {
                   <TableHead>
                     <TableRow>
                       <TableCell>Aktenzeichen</TableCell>
+                      <TableCell>Rolle</TableCell>
                       <TableCell>Rechtsgebiet</TableCell>
                       <TableCell>Phase</TableCell>
                       <TableCell>Status</TableCell>
@@ -138,6 +143,14 @@ export default function MandantenDetail() {
                           <Typography variant="body2" fontWeight={600} color="primary.main">
                             {f.aktenzeichen}
                           </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            size="small"
+                            variant="outlined"
+                            label={f.mandantId === id ? 'Hauptmandant' : 'Mitmandant'}
+                            color={f.mandantId === id ? 'primary' : 'default'}
+                          />
                         </TableCell>
                         <TableCell>
                           <Chip

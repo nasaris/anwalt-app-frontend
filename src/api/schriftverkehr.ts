@@ -8,6 +8,9 @@ export const schriftverkehrApi = {
   create: (data: Omit<Schriftverkehr, 'id' | 'erstelltAm'>) =>
     client.post<Schriftverkehr>('/api/schriftverkehr', data).then((r) => r.data),
 
+  update: (id: string, changes: Partial<Omit<Schriftverkehr, 'id' | 'fallId' | 'erstelltAm'>>) =>
+    client.patch<Schriftverkehr>(`/api/schriftverkehr/${id}`, changes).then((r) => r.data),
+
   delete: (id: string) =>
     client.delete(`/api/schriftverkehr/${id}`),
 };

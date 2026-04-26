@@ -382,6 +382,17 @@ function KanzleiTab() {
           <Grid size={{ xs: 12, sm: 4 }}>{field('Fax', 'fax')}</Grid>
           <Grid size={{ xs: 12, sm: 6 }}>{field('E-Mail (Kanzlei)', 'email')}</Grid>
           <Grid size={{ xs: 12, sm: 6 }}>{field('Website', 'website', 'Optional')}</Grid>
+          <Grid size={{ xs: 12 }}>
+            <Typography variant="subtitle2" color="text.secondary" mb={1} mt={0.5}>
+              Briefkopf-Vorschau (optional, wie PDF)
+            </Typography>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            {field('ÖPNV-Linien', 'briefkopfOepnvLinien', 'z. B. 58, 68, 132 — unter Adresse im Fokusmodus')}
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            {field('Haltestelle', 'briefkopfOepnvHaltestelle', 'z. B. (Haltestelle Baldeplatz)')}
+          </Grid>
 
           <Grid size={{ xs: 12 }}>
             <Divider sx={{ my: 1 }} />

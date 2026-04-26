@@ -30,7 +30,10 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import TuneIcon from '@mui/icons-material/Tune';
 import { faelleApi } from '../../api/faelle';
 import { mandantenApi } from '../../api/mandanten';
-import type { Fall, FallStatus, Mandant } from '../../types';
+import { wiedervorlagenApi } from '../../api/parteien';
+import type { Fall, FallStatus, Mandant, Wiedervorlage } from '../../types';
+import { naechsteOffeneWvProFall } from '../../utils/fallWvAnzeige';
+import { fallAktivitaetSuchtext } from '../../utils/fallAktivitaetTimeline';
 import FallCard from '../../components/FallCard/FallCard';
 import FallListe from '../../components/FallListe/FallListe';
 
@@ -60,10 +63,11 @@ export default function Faelle() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [faelle, setFaelle] = useState<Fall[]>([]);
   const [mandantenMap, setMandantenMap] = useState<Record<string, Mandant>>({});
+  const [wiedervorlagenOffen, setWiedervorlagenOffen] = useState<Wiedervorlage[]>([]);
   const [loading, setLoading] = useState(true);
   const [suche, setSuche] = useState(() => searchParams.get('suche') ?? '');
 
-  const rechtsgebiet = searchParams.get('rechtsgebiet') as 'verkehrsrecht' | 'arbeitsrecht' | null;
+  const rechtsgebiet = searchParams.get('rechtsgebiet') as 'verkehrsrecht' | 'arbeitsrecht' | 'zivilrecht' | 'insolvenzrecht' | 'wettbewerbsrecht' | 'erbrecht' | null;
   const isKacheln = searchParams.get('ansicht') === 'kacheln';
   const statusApi = parseStatusParam(searchParams.get('status'));
   const phaseFilter = searchParams.get('phase') ?? '';
@@ -100,15 +104,23 @@ export default function Faelle() {
     Promise.all([
       faelleApi.getAll({ rechtsgebiet: rechtsgebiet || undefined, status: statusApi }),
       mandantenApi.getAll(),
-    ]).then(([faelleData, mandantenData]) => {
+      wiedervorlagenApi.getAll({ nurOffene: true }),
+    ]).then(([faelleData, mandantenData, wvData]) => {
       setFaelle(Array.isArray(faelleData) ? faelleData : []);
       const md = Array.isArray(mandantenData) ? mandantenData : [];
       setMandantenMap(Object.fromEntries(md.map((m) => [m.id, m])));
+      setWiedervorlagenOffen(Array.isArray(wvData) ? wvData : []);
     }).catch(() => {
       setFaelle([]);
       setMandantenMap({});
+      setWiedervorlagenOffen([]);
     }).finally(() => setLoading(false));
   }, [rechtsgebiet, statusApi]);
+
+  const naechsteWvByFallId = useMemo(
+    () => naechsteOffeneWvProFall(wiedervorlagenOffen),
+    [wiedervorlagenOffen],
+  );
 
   const gefiltert = useMemo(() => {
     let list: Fall[] = faelle;
@@ -123,7 +135,7 @@ export default function Faelle() {
         return (
           f.aktenzeichen.toLowerCase().includes(q) ||
           f.rechtsgebiet.toLowerCase().includes(q) ||
-          (f.notizen?.toLowerCase().includes(q) ?? false) ||
+          fallAktivitaetSuchtext(f).includes(q) ||
           f.id.toLowerCase().includes(q) ||
           mandantText.includes(q)
         );
@@ -134,14 +146,18 @@ export default function Faelle() {
       list = list.filter((f) => String(f.phase) === phaseFilter);
     }
     if (nurWv) {
-      list = list.filter((f) => Boolean(f.wiedervorlage && f.status === 'aktiv'));
+      list = list.filter(
+        (f) =>
+          f.status === 'aktiv' &&
+          Boolean(f.wiedervorlage || naechsteWvByFallId[f.id]),
+      );
     }
     if (nurKschg) {
       list = list.filter((f) => Boolean(f.arbeitsrecht?.fristEnde));
     }
 
     return list;
-  }, [faelle, mandantenMap, suche, phaseFilter, nurWv, nurKschg]);
+  }, [faelle, mandantenMap, suche, phaseFilter, nurWv, nurKschg, naechsteWvByFallId]);
 
   const resetErweitert = () => {
     mergeParams({
@@ -198,8 +214,12 @@ export default function Faelle() {
           }}
         >
           <ToggleButton value="alle">Alle</ToggleButton>
-          <ToggleButton value="verkehrsrecht">Verkehrsrecht</ToggleButton>
-          <ToggleButton value="arbeitsrecht">Arbeitsrecht</ToggleButton>
+          <ToggleButton value="verkehrsrecht">Verkehr</ToggleButton>
+          <ToggleButton value="arbeitsrecht">Arbeit</ToggleButton>
+          <ToggleButton value="zivilrecht">Zivil</ToggleButton>
+          <ToggleButton value="insolvenzrecht">Insolvenz</ToggleButton>
+          <ToggleButton value="wettbewerbsrecht">Wettbewerb</ToggleButton>
+          <ToggleButton value="erbrecht">Erbrecht</ToggleButton>
         </ToggleButtonGroup>
 
         <ToggleButtonGroup
@@ -354,12 +374,12 @@ export default function Faelle() {
         <Grid container spacing={2}>
           {gefiltert.map((fall) => (
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={fall.id}>
-              <FallCard fall={fall} />
+              <FallCard fall={fall} naechsteWvByFallId={naechsteWvByFallId} />
             </Grid>
           ))}
         </Grid>
       ) : (
-        <FallListe faelle={gefiltert} mandantenMap={mandantenMap} />
+        <FallListe faelle={gefiltert} mandantenMap={mandantenMap} naechsteWvByFallId={naechsteWvByFallId} />
       )}
     </Box>
   );

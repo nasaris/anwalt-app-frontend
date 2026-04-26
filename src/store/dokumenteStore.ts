@@ -14,7 +14,14 @@ export interface Dokument {
   briefDaten: BriefDaten;   // zum erneuten Herunterladen
 }
 
-export type DateiKategorie = 'gutachten' | 'rechnung' | 'foto' | 'sonstiges';
+export type DateiKategorie =
+  | 'gutachten'
+  | 'rechnung'
+  | 'rechnung_werkstatt'
+  | 'messwerk'
+  | 'foto'
+  | 'sonstiges'
+  | string;
 
 export interface UploadedDatei {
   id: string;
@@ -24,6 +31,8 @@ export interface UploadedDatei {
   groesse: number;          // bytes
   hochgeladenAm: string;    // ISO date
   kategorie: DateiKategorie;
+  /** Für Inline-Vorschau im Dialog (optional, v. a. bei älteren Einträgen nicht vorhanden) */
+  dataUrl?: string;
 }
 
 interface DokumenteStore {

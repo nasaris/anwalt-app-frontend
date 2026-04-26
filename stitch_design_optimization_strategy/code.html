@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+
+<html class="light" lang="de"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary": "#ffffff",
+                    "surface-container-high": "#dee8ff",
+                    "primary": "#004ac6",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-variant": "#d8e3fb",
+                    "outline": "#737686",
+                    "on-secondary-fixed-variant": "#3a485b",
+                    "tertiary-fixed": "#dfe3e7",
+                    "on-surface": "#111c2d",
+                    "inverse-on-surface": "#ecf1ff",
+                    "inverse-primary": "#b4c5ff",
+                    "inverse-surface": "#263143",
+                    "surface-dim": "#cfdaf2",
+                    "on-primary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "tertiary-fixed-dim": "#c3c7cb",
+                    "on-primary-fixed": "#00174b",
+                    "error-container": "#ffdad6",
+                    "tertiary": "#515659",
+                    "secondary-container": "#d5e3fc",
+                    "secondary": "#515f74",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "secondary-fixed-dim": "#b9c7df",
+                    "surface-container-highest": "#d8e3fb",
+                    "on-surface-variant": "#434655",
+                    "on-tertiary-fixed": "#171c1f",
+                    "surface-container": "#e7eeff",
+                    "on-error": "#ffffff",
+                    "background": "#f9f9ff",
+                    "on-secondary": "#ffffff",
+                    "surface": "#f9f9ff",
+                    "surface-bright": "#f9f9ff",
+                    "tertiary-container": "#696e71",
+                    "on-primary-fixed-variant": "#003ea8",
+                    "on-background": "#111c2d",
+                    "on-secondary-container": "#57657a",
+                    "on-tertiary-fixed-variant": "#43474b",
+                    "primary-fixed": "#dbe1ff",
+                    "on-secondary-fixed": "#0d1c2e",
+                    "surface-container-low": "#f0f3ff",
+                    "on-primary-container": "#eeefff",
+                    "surface-tint": "#0053db",
+                    "on-tertiary-container": "#edf1f5",
+                    "on-error-container": "#93000a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-padding": "24px",
+                    "sm": "12px",
+                    "base": "4px",
+                    "md": "16px",
+                    "xs": "8px",
+                    "lg": "24px",
+                    "gutter": "20px",
+                    "xl": "32px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "h1": ["Inter"],
+                    "h2": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "badge": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "h3": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "h1": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "h2": ["18px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "badge": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "h3": ["16px", {"lineHeight": "24px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- Side Navigation -->
+<aside class="fixed h-full w-[240px] left-0 top-0 border-r border-slate-200 bg-white flex flex-col px-4 py-6 z-50">
+<div class="mb-10 px-2">
+<h1 class="text-xl font-bold text-slate-900 tracking-tight">LexLegal</h1>
+<p class="text-xs text-slate-500 font-medium">Case Management</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-blue-600 transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-blue-600 bg-slate-50 font-semibold border-r-2 border-blue-600 transition-colors" href="#">
+<span class="material-symbols-outlined">folder_open</span>
+<span class="font-body-md text-body-md">Fälle</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-blue-600 transition-colors" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-body-md text-body-md">Kalender</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-blue-600 transition-colors" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-body-md text-body-md">Mandanten</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-blue-600 transition-colors" href="#">
+<span class="material-symbols-outlined">person_search</span>
+<span class="font-body-md text-body-md">Parteien</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-blue-600 transition-colors" href="#">
+<span class="material-symbols-outlined">admin_panel_settings</span>
+<span class="font-body-md text-body-md">Verwaltung</span>
+</a>
+</nav>
+<div class="mt-auto">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-blue-600 transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Einstellungen</span>
+</a>
+</div>
+</aside>
+<!-- Top AppBar -->
+<header class="fixed top-0 right-0 left-[240px] h-16 bg-white/80 backdrop-blur-md border-b border-slate-200 z-40 flex items-center justify-between px-8">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="text-lg font-black text-slate-900">IR/2026/002</span>
+<span class="px-2 py-0.5 rounded bg-green-100 text-green-700 text-[10px] font-bold uppercase tracking-wider">aktiv</span>
+</div>
+<nav class="flex items-center gap-4 text-sm font-semibold">
+<a class="text-slate-500 hover:text-blue-600" href="#">Fälle</a>
+<span class="text-slate-300">/</span>
+<a class="text-blue-600 border-b-2 border-blue-600 pb-1" href="#">Aktueller Fall</a>
+</nav>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                Zurück
+            </button>
+<button class="px-4 py-2 text-sm font-semibold text-white bg-primary hover:bg-blue-700 rounded-lg transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+                Fall bearbeiten
+            </button>
+<div class="h-6 w-px bg-slate-200 mx-2"></div>
+<button class="p-2 text-slate-400 hover:text-slate-600 rounded-full">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden border border-slate-300">
+<img class="w-full h-full object-cover" data-alt="professional portrait of a senior lawyer in a charcoal suit with a confident expression and warm office background lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQ3zZbdA2rDvSGGGCQkplxzecb1BvevsmdHFuTuRp7LLea-NC35wbED8sd0q4JrvCqbBeEgT7BQnrcc-sLdM8SL9tzM_XWo0oNLieZi8YVX5fk8-NfqFMTabWP5J_MrTCTBN1Gd8nCZ__Yfn-YWhrDGZAn2HgxnCClwaJfC13KeUPhkWFI3C2vn7U6BN-F7ql9wGvnojZyZJ3z5mS544jZRXnK3sNJHFQbyBO2ltoH0sXdpc5A_FLvWGk5gJdXaqHJPwbP4RXQ2fsN"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-[240px] pt-16 min-h-screen">
+<div class="p-8 max-w-7xl mx-auto">
+<!-- Phase Progress Tracker -->
+<div class="mb-8 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-h3 text-h3 text-slate-900">Fallfortschritt</h3>
+<span class="text-xs font-semibold text-slate-500 uppercase tracking-widest">Phase 2 von 3</span>
+</div>
+<div class="relative flex items-center justify-between">
+<div class="absolute top-1/2 left-0 w-full h-1 bg-slate-100 -translate-y-1/2 z-0"></div>
+<div class="absolute top-1/2 left-0 w-1/2 h-1 bg-primary -translate-y-1/2 z-0"></div>
+<!-- Phase 1 -->
+<div class="relative z-10 flex flex-col items-center">
+<div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-lg shadow-blue-200">
+<span class="material-symbols-outlined">check</span>
+</div>
+<span class="mt-2 text-xs font-bold text-slate-900">Analyse &amp; Aufnahme</span>
+</div>
+<!-- Phase 2 -->
+<div class="relative z-10 flex flex-col items-center">
+<div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center ring-4 ring-blue-50">
+<span class="font-bold">2</span>
+</div>
+<span class="mt-2 text-xs font-bold text-primary">Verhandlung &amp; Schriftsatz</span>
+</div>
+<!-- Phase 3 -->
+<div class="relative z-10 flex flex-col items-center">
+<div class="w-10 h-10 rounded-full bg-white border-2 border-slate-200 text-slate-400 flex items-center justify-center">
+<span class="font-bold">3</span>
+</div>
+<span class="mt-2 text-xs font-bold text-slate-400">Abschluss &amp; Urteil</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Left Column (Main Content) -->
+<div class="col-span-8 space-y-6">
+<!-- Phasendetails Card -->
+<section class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+<div class="px-6 py-4 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
+<h3 class="font-h2 text-h2 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">assignment</span>
+                                Phasendetails
+                            </h3>
+<button class="text-xs font-bold text-primary hover:underline">Vollständige Historie</button>
+</div>
+<div class="p-6">
+<div class="relative mb-6">
+<input class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" placeholder="Aufgabe hinzufügen..." type="text"/>
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-[20px]">add_circle</span>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-4 p-3 rounded-lg border border-slate-100 hover:border-blue-100 hover:bg-blue-50/30 transition-all group">
+<input class="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+<div class="flex-1">
+<p class="text-body-md font-medium text-slate-700">Entwurf Klageschrift vorbereiten</p>
+<p class="text-[11px] text-slate-400">Fällig am 14. Okt 2026 • Rechtsanwalt Müller</p>
+</div>
+<span class="px-2 py-0.5 rounded bg-orange-100 text-orange-700 text-[10px] font-bold">HOCH</span>
+</div>
+<div class="flex items-center gap-4 p-3 rounded-lg border border-slate-100 hover:border-blue-100 hover:bg-blue-50/30 transition-all group">
+<input class="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+<div class="flex-1">
+<p class="text-body-md font-medium text-slate-700">Rückmeldung Mandant zu Zeugenliste</p>
+<p class="text-[11px] text-slate-400">Fällig am 16. Okt 2026 • Sekretariat</p>
+</div>
+<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px] font-bold">NORMAL</span>
+</div>
+<div class="flex items-center gap-4 p-3 rounded-lg bg-slate-50/50 opacity-60">
+<span class="material-symbols-outlined text-green-500 text-[20px]" data-weight="fill">check_circle</span>
+<div class="flex-1">
+<p class="text-body-md font-medium text-slate-500 line-through">Erste Akteneinsicht abgeschlossen</p>
+<p class="text-[11px] text-slate-400">Abgeschlossen am 08. Okt 2026</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Schriftverkehr Card -->
+<section class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+<div class="px-6 py-4 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
+<h3 class="font-h2 text-h2 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">mail</span>
+                                Schriftverkehr
+                            </h3>
+<div class="flex gap-2">
+<button class="p-1.5 rounded bg-white border border-slate-200 text-slate-500 hover:text-primary"><span class="material-symbols-outlined text-[18px]">search</span></button>
+<button class="p-1.5 rounded bg-white border border-slate-200 text-slate-500 hover:text-primary"><span class="material-symbols-outlined text-[18px]">filter_list</span></button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-slate-50/50 border-b border-slate-100">
+<tr>
+<th class="px-6 py-3 font-label-caps text-label-caps text-slate-500">Typ</th>
+<th class="px-6 py-3 font-label-caps text-label-caps text-slate-500">Betreff</th>
+<th class="px-6 py-3 font-label-caps text-label-caps text-slate-500">Datum</th>
+<th class="px-6 py-3 font-label-caps text-label-caps text-slate-500 text-right">Aktion</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-50">
+<tr class="hover:bg-slate-50/50 transition-colors">
+<td class="px-6 py-4">
+<span class="material-symbols-outlined text-blue-500">outgoing_mail</span>
+</td>
+<td class="px-6 py-4">
+<div class="text-body-md font-medium text-slate-700">Anschreiben an Gegenseite (RA Schmidt)</div>
+<div class="text-[11px] text-slate-400">Geltendmachung von Abfindungsansprüchen</div>
+</td>
+<td class="px-6 py-4 text-body-sm text-slate-500">Gestern, 14:20</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-primary"><span class="material-symbols-outlined">more_vert</span></button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 transition-colors">
+<td class="px-6 py-4">
+<span class="material-symbols-outlined text-orange-400">inbox</span>
+</td>
+<td class="px-6 py-4">
+<div class="text-body-md font-medium text-slate-700">Eingang vom Arbeitsgericht Berlin</div>
+<div class="text-[11px] text-slate-400">Zustellung der Terminierung zur Güteverhandlung</div>
+</td>
+<td class="px-6 py-4 text-body-sm text-slate-500">09. Okt 2026</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-primary"><span class="material-symbols-outlined">more_vert</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Fallaktivität Card -->
+<section class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+<div class="px-6 py-4 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
+<h3 class="font-h2 text-h2 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">history</span>
+                                Fallaktivität
+                            </h3>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 rounded bg-blue-50 text-blue-700 text-xs font-bold hover:bg-blue-100 transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">edit_note</span> Notiz
+                                </button>
+<button class="px-3 py-1.5 rounded bg-green-50 text-green-700 text-xs font-bold hover:bg-green-100 transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">call</span> Anruf
+                                </button>
+</div>
+</div>
+<div class="p-6 relative">
+<div class="absolute left-9 top-10 bottom-10 w-px bg-slate-100"></div>
+<div class="space-y-8">
+<div class="relative flex gap-4">
+<div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center relative z-10 ring-4 ring-white">
+<span class="material-symbols-outlined text-[14px]">call</span>
+</div>
+<div class="flex-1 bg-slate-50/50 p-3 rounded-lg border border-slate-100">
+<div class="flex justify-between items-start mb-1">
+<span class="font-body-md font-bold text-slate-800">Telefonat mit Mandant</span>
+<span class="text-[11px] text-slate-400">Heute, 09:15</span>
+</div>
+<p class="text-body-sm text-slate-600">Besprechung der neuen Beweismittel. Mandant wird Dokumente bis morgen nachreichen.</p>
+</div>
+</div>
+<div class="relative flex gap-4">
+<div class="w-6 h-6 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center relative z-10 ring-4 ring-white">
+<span class="material-symbols-outlined text-[14px]">update</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<span class="font-body-md font-medium text-slate-600">Statusänderung: <span class="font-bold text-slate-800">Aufnahme → Verhandlung</span></span>
+<span class="text-[11px] text-slate-400">10. Okt, 11:30</span>
+</div>
+</div>
+</div>
+<div class="relative flex gap-4">
+<div class="w-6 h-6 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center relative z-10 ring-4 ring-white">
+<span class="material-symbols-outlined text-[14px]">description</span>
+</div>
+<div class="flex-1 bg-slate-50/50 p-3 rounded-lg border border-slate-100">
+<div class="flex justify-between items-start mb-1">
+<span class="font-body-md font-bold text-slate-800">Interne Notiz</span>
+<span class="text-[11px] text-slate-400">09. Okt, 16:45</span>
+</div>
+<p class="text-body-sm text-slate-600 italic">"Recherche zu § 613a BGB abgeschlossen. Präzedenzfall OLG München (2024) passt perfekt."</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column (Sidebar) -->
+<aside class="col-span-4 space-y-6">
+<!-- Fallinformationen -->
+<section class="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
+<h3 class="font-label-caps text-label-caps text-slate-400 uppercase mb-4 tracking-widest">Fallinformationen</h3>
+<div class="space-y-4">
+<div>
+<label class="font-label-caps text-label-caps text-slate-500 mb-1 block">FALLNUMMER</label>
+<p class="font-body-md font-bold text-slate-900">IR/2026/002</p>
+</div>
+<div>
+<label class="font-label-caps text-label-caps text-slate-500 mb-1 block">RECHTSGEBIET</label>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-blue-500"></span>
+<p class="font-body-md font-bold text-slate-900">Arbeitsrecht</p>
+</div>
+</div>
+<div>
+<label class="font-label-caps text-label-caps text-slate-500 mb-1 block">ERÖFFNUNGSDATUM</label>
+<p class="font-body-md font-bold text-slate-900">01. Oktober 2026</p>
+</div>
+<div class="pt-4 border-t border-slate-100">
+<label class="font-label-caps text-label-caps text-slate-500 mb-1 block">ZUSTÄNDIGKEIT</label>
+<div class="flex items-center gap-2 mt-2">
+<div class="w-6 h-6 rounded-full bg-slate-200 overflow-hidden border border-slate-300">
+<img class="w-full h-full object-cover" data-alt="close-up of a professional male attorney in business attire with blurred library background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQ9-D9Am1rcs9cm-86YscrxpF8xdFmoFwtvhiPanhwpc7U3VYooBKZ5vCujzynL9Wte53A8Mve93XI1UpLqwaYALVyh5yAIr1IxK1kiYuADfHUZI-87dVustxCK0QGrW9QQO2uLNF5agVRAUzrPSZKVkUTkfnL3DFFDUgCutg-w_A_H0_zzkMxoLxHMJgm508hHIPpd_jcEcvBlN_87Jx6Haan3P5DxIiZYMuxQecJJjHzyQsh8sr0iHEnx8n6H-0xtQq09tAqr947"/>
+</div>
+<p class="text-body-sm font-medium text-slate-700">RA Dr. Alexander Meier</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Client Profile Card -->
+<section class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+<div class="bg-primary/5 p-6 flex flex-col items-center text-center">
+<div class="w-20 h-20 rounded-full border-4 border-white shadow-md overflow-hidden mb-3">
+<img class="w-full h-full object-cover" data-alt="portrait of a young man with dark hair and a neat beard, wearing a casual professional sweater, smiling softly" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxt21NzJp118IyLkkqbFMuadOEPCm1lNyNFgfi-yDUhQxbutKQcdHsBtZOWR_eR_n0z50ieVypwpMCQvg2GO19x7QZIr1bnmpuVIO8r9c5qSvqqjCWA4JMh1ZvE0Rch3-FiutSxOqV_J_-nMpmwK0Rexc93REXj-SlJHyLOVNkoxc6esN5NT8ydxOnFm6lkt_xRZ9ornccQaMdRW8BzIccGbmFweZLMKD1QlaSM9FXactgVDZwMACWqHAWuO8qVfAXhe6uBNk7-Hrt"/>
+</div>
+<h3 class="font-h2 text-h2 text-slate-900">Sabihullah Nasari</h3>
+<p class="text-body-sm text-slate-500">Mandant (Hauptpartei)</p>
+</div>
+<div class="p-6 space-y-3">
+<div class="flex items-center gap-3 text-slate-600">
+<span class="material-symbols-outlined text-[20px]">mail</span>
+<span class="text-body-sm">s.nasari@example.com</span>
+</div>
+<div class="flex items-center gap-3 text-slate-600">
+<span class="material-symbols-outlined text-[20px]">phone</span>
+<span class="text-body-sm">+49 176 12345678</span>
+</div>
+<button class="w-full mt-4 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold rounded-lg transition-colors">PROFIL ANSEHEN</button>
+</div>
+</section>
+<!-- Unterlagen/Dokumente -->
+<section class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+<div class="px-6 py-4 border-b border-slate-50 flex justify-between items-center">
+<h3 class="font-h3 text-h3">Unterlagen</h3>
+<div class="bg-slate-100 p-0.5 rounded-lg flex">
+<button class="p-1 rounded bg-white shadow-sm text-primary">
+<span class="material-symbols-outlined text-[18px]">list</span>
+</button>
+<button class="p-1 rounded text-slate-400 hover:text-slate-600">
+<span class="material-symbols-outlined text-[18px]">grid_view</span>
+</button>
+</div>
+</div>
+<div class="p-4 space-y-2">
+<div class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer group">
+<div class="w-10 h-10 rounded bg-red-50 text-red-500 flex items-center justify-center">
+<span class="material-symbols-outlined">picture_as_pdf</span>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="text-body-sm font-medium text-slate-700 truncate">Arbeitsvertrag_final.pdf</p>
+<p class="text-[10px] text-slate-400 uppercase">2.4 MB • 01.10.2026</p>
+</div>
+<span class="material-symbols-outlined text-slate-300 opacity-0 group-hover:opacity-100">download</span>
+</div>
+<div class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer group">
+<div class="w-10 h-10 rounded bg-blue-50 text-blue-500 flex items-center justify-center">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="text-body-sm font-medium text-slate-700 truncate">Kündigungsschreiben.docx</p>
+<p class="text-[10px] text-slate-400 uppercase">1.1 MB • 03.10.2026</p>
+</div>
+<span class="material-symbols-outlined text-slate-300 opacity-0 group-hover:opacity-100">download</span>
+</div>
+<div class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer group">
+<div class="w-10 h-10 rounded bg-amber-50 text-amber-500 flex items-center justify-center">
+<span class="material-symbols-outlined">image</span>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="text-body-sm font-medium text-slate-700 truncate">Beweisfoto_Zutritt.jpg</p>
+<p class="text-[10px] text-slate-400 uppercase">4.8 MB • 05.10.2026</p>
+</div>
+<span class="material-symbols-outlined text-slate-300 opacity-0 group-hover:opacity-100">download</span>
+</div>
+</div>
+<div class="p-4 bg-slate-50/50 border-t border-slate-50">
+<button class="w-full py-2 border-2 border-dashed border-slate-200 rounded-lg text-slate-400 text-xs font-bold hover:border-primary hover:text-primary transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">upload_file</span> DATEI HOCHLADEN
+                            </button>
+</div>
+</section>
+</aside>
+</div>
+</div>
+</main>
+</body></html>

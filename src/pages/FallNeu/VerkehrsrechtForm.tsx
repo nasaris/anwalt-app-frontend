@@ -27,14 +27,19 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import { faelleApi } from '../../api/faelle';
 import { mandantenApi } from '../../api/mandanten';
 import { parteienApi } from '../../api/parteien';
-import type { Mandant, Partei } from '../../types';
+import type { FallParteiEintrag, Mandant, Partei, ParteienTyp } from '../../types';
 import MandantDialog from '../../components/MandantDialog/MandantDialog';
+import { AKTENZEICHEN_AUTO_HINT, naechstesAktenzeichen } from '../../utils/aktenzeichenVergabe';
 
 const schema = z.object({
   aktenzeichen: z.string().min(3, 'Pflichtfeld'),
   mandantId: z.string().min(1, 'Mandant wählen'),
   abrechnungsart: z.enum(['fiktiv', 'konkret']),
   anspruchsinhaber: z.enum(['mandant', 'leasing', 'bank']),
+  polizeiAufnahme: z.enum(['ja', 'nein']).default('nein'),
+  polizeiAktenzeichen: z.string().optional(),
+  staatsanwaltschaftFall: z.enum(['ja', 'nein']).default('nein'),
+  justizAktenzeichen: z.string().optional(),
   kennzeichen: z.string().min(1, 'Pflichtfeld'),
   fahrzeugTyp: z.string().min(1, 'Pflichtfeld'),
   baujahr: z.number().min(1990).max(new Date().getFullYear()),
@@ -75,6 +80,10 @@ export default function VerkehrsrechtForm({ onBack, onSaved }: Props) {
       mandantId: '',
       abrechnungsart: 'konkret',
       anspruchsinhaber: 'mandant',
+      polizeiAufnahme: 'nein',
+      polizeiAktenzeichen: '',
+      staatsanwaltschaftFall: 'nein',
+      justizAktenzeichen: '',
       baujahr: new Date().getFullYear() - 2,
       gutachterId: '',
       werkstattId: '',
@@ -90,8 +99,27 @@ export default function VerkehrsrechtForm({ onBack, onSaved }: Props) {
     parteienApi.getAll('versicherung').then(setVersicherungen);
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+    faelleApi
+      .getAll()
+      .then((faelle) => {
+        if (cancelled) return;
+        const az = faelle.map((f) => f.aktenzeichen);
+        setValue('aktenzeichen', naechstesAktenzeichen(az, 'verkehrsrecht'));
+      })
+      .catch(() => {
+        if (!cancelled) setValue('aktenzeichen', naechstesAktenzeichen([], 'verkehrsrecht'));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [setValue]);
+
   const abrechnungsart = watch('abrechnungsart');
   const anspruchsinhaber = watch('anspruchsinhaber');
+  const polizeiAufnahme = watch('polizeiAufnahme');
+  const staatsanwaltschaftFall = watch('staatsanwaltschaftFall');
   const selectedMandantId = watch('mandantId');
   const selectedMandant = mandanten.find((m) => m.id === selectedMandantId);
 
@@ -105,20 +133,40 @@ export default function VerkehrsrechtForm({ onBack, onSaved }: Props) {
         phase: 1,
         mandantId: data.mandantId,
         notizen: data.notizen,
-        verkehrsrecht: {
-          abrechnungsart: data.abrechnungsart,
-          anspruchsinhaber: data.anspruchsinhaber,
-          fahrzeug: {
-            kennzeichen: data.kennzeichen,
-            typ: data.fahrzeugTyp,
-            baujahr: data.baujahr,
-            erstzulassung: data.erstzulassung || undefined,
-          },
-          schadenshoehe: data.schadenshoehe ? parseFloat(data.schadenshoehe) : undefined,
-          gutachterId: data.gutachterId || undefined,
-          werkstattId: data.werkstattId || undefined,
-          versicherungId: data.versicherungId || undefined,
-        },
+        verkehrsrecht: (() => {
+          const beteiligteParteien: FallParteiEintrag[] = [];
+          const push = (rolle: ParteienTyp, pid: string | undefined) => {
+            const t = pid?.trim();
+            if (t)
+              beteiligteParteien.push({
+                eintragId: crypto.randomUUID(),
+                rolle,
+                parteiId: t,
+              });
+          };
+          push('versicherung', data.versicherungId);
+          push('gutachter', data.gutachterId);
+          push('werkstatt', data.werkstattId);
+          return {
+            abrechnungsart: data.abrechnungsart,
+            anspruchsinhaber: data.anspruchsinhaber,
+            polizeiAufnahme: data.polizeiAufnahme === 'ja',
+            polizeiAktenzeichen: data.polizeiAufnahme === 'ja' ? (data.polizeiAktenzeichen?.trim() || undefined) : undefined,
+            staatsanwaltschaftFall: data.staatsanwaltschaftFall === 'ja',
+            justizAktenzeichen: data.staatsanwaltschaftFall === 'ja' ? (data.justizAktenzeichen?.trim() || undefined) : undefined,
+            fahrzeug: {
+              kennzeichen: data.kennzeichen,
+              typ: data.fahrzeugTyp,
+              baujahr: data.baujahr,
+              erstzulassung: data.erstzulassung || undefined,
+            },
+            schadenshoehe: data.schadenshoehe ? parseFloat(data.schadenshoehe) : undefined,
+            gutachterId: data.gutachterId || undefined,
+            werkstattId: data.werkstattId || undefined,
+            versicherungId: data.versicherungId || undefined,
+            beteiligteParteien: beteiligteParteien.length > 0 ? beteiligteParteien : undefined,
+          };
+        })(),
       });
       onSaved(fall.id);
     } catch {
@@ -144,8 +192,9 @@ export default function VerkehrsrechtForm({ onBack, onSaved }: Props) {
               fullWidth
               {...register('aktenzeichen')}
               error={!!errors.aktenzeichen}
-              helperText={errors.aktenzeichen?.message ?? 'z.B. VR/2025/010'}
+              helperText={errors.aktenzeichen?.message ?? AKTENZEICHEN_AUTO_HINT}
               required
+              InputProps={{ readOnly: true }}
             />
           </Grid>
 
@@ -202,6 +251,60 @@ export default function VerkehrsrechtForm({ onBack, onSaved }: Props) {
                 </span>
               </Tooltip>
             </Stack>
+          </Grid>
+
+          <Grid size={{ xs: 12 }}><Divider /></Grid>
+
+          <Grid size={{ xs: 12 }}>
+            <Typography variant="subtitle2" color="primary" mb={1}>Polizei / Staatsanwaltschaft</Typography>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <FormControl>
+              <FormLabel>Unfall polizeilich aufgenommen?</FormLabel>
+              <Controller
+                name="polizeiAufnahme"
+                control={control}
+                render={({ field }) => (
+                  <RadioGroup {...field} row>
+                    <FormControlLabel value="ja" control={<Radio />} label="Ja" />
+                    <FormControlLabel value="nein" control={<Radio />} label="Nein" />
+                  </RadioGroup>
+                )}
+              />
+            </FormControl>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField
+              label="Polizeiliches AZ"
+              fullWidth
+              {...register('polizeiAktenzeichen')}
+              disabled={polizeiAufnahme !== 'ja'}
+              helperText={polizeiAufnahme === 'ja' ? 'Optional, falls vorhanden' : 'Nur bei polizeilicher Aufnahme'}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <FormControl>
+              <FormLabel>Fall bei Staatsanwaltschaft (StA)?</FormLabel>
+              <Controller
+                name="staatsanwaltschaftFall"
+                control={control}
+                render={({ field }) => (
+                  <RadioGroup {...field} row>
+                    <FormControlLabel value="ja" control={<Radio />} label="Ja" />
+                    <FormControlLabel value="nein" control={<Radio />} label="Nein" />
+                  </RadioGroup>
+                )}
+              />
+            </FormControl>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField
+              label="Justiz-Aktenzeichen"
+              fullWidth
+              {...register('justizAktenzeichen')}
+              disabled={staatsanwaltschaftFall !== 'ja'}
+              helperText={staatsanwaltschaftFall === 'ja' ? 'z. B. bei Fahrerflucht' : 'Nur bei StA-Fall'}
+            />
           </Grid>
 
           <Grid size={{ xs: 12 }}><Divider /></Grid>
@@ -363,12 +466,12 @@ export default function VerkehrsrechtForm({ onBack, onSaved }: Props) {
 
           <Grid size={{ xs: 12 }}>
             <TextField
-              label="Notizen"
+              label="Fallaktivität — erste Notiz"
               multiline
               rows={3}
               fullWidth
               {...register('notizen')}
-              helperText="Interne Notizen zum Fall"
+              helperText="Interne Notiz zum Fall — erscheint in der Chronik auf der Falldetailseite."
             />
           </Grid>
         </Grid>

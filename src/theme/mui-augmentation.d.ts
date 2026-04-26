@@ -1,6 +1,6 @@
-import type { tokens } from './tokens';
+import type { ThemeTokens } from './tokens';
 
-export type JuristPalette = typeof tokens;
+export type JuristPalette = ThemeTokens;
 
 declare module '@mui/material/styles' {
   interface Palette {

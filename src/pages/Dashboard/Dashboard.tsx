@@ -38,6 +38,7 @@ import { wiedervorlagenApi } from '../../api/parteien';
 import type { Fall, Mandant, Wiedervorlage } from '../../types';
 import FristBadge from '../../components/FristBadge/FristBadge';
 import { fristDringlichkeit, verbleibendeTage } from '../../utils/fristBerechnung';
+import { fallNeuesteNotizText } from '../../utils/fallAktivitaetTimeline';
 
 const CARD_SHADOW = '0 8px 32px rgba(12, 15, 16, 0.06)';
 
@@ -64,8 +65,17 @@ function statusPill(fall: Fall): { label: string; color: 'default' | 'primary' |
   return { label: 'AKTIV', color: 'default' };
 }
 
+const RECHTSGEBIET_TAG: Record<string, string> = {
+  verkehrsrecht: 'VERKEHRSRECHT',
+  arbeitsrecht: 'ARBEITSRECHT',
+  zivilrecht: 'ZIVILRECHT',
+  insolvenzrecht: 'INSOLVENZRECHT',
+  wettbewerbsrecht: 'WETTBEWERBSRECHT',
+  erbrecht: 'ERBRECHT',
+};
+
 function rechtsgebietTag(f: Fall): string {
-  return f.rechtsgebiet === 'verkehrsrecht' ? 'VERKEHRSRECHT' : 'ARBEITSRECHT';
+  return RECHTSGEBIET_TAG[f.rechtsgebiet] ?? f.rechtsgebiet.toUpperCase();
 }
 
 function aufgabenStatus(index: number): 'OFFEN' | 'IN BEARBEITUNG' {
@@ -521,11 +531,20 @@ export default function Dashboard() {
                       {fallTitel(f, mandanten)}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                      {f.notizen?.slice(0, 120) ||
-                        (f.rechtsgebiet === 'verkehrsrecht'
-                          ? 'Verkehrsrechtssache — Schadenregulierung und Gutachten.'
-                          : 'Arbeitsrechtssache — Mandantenvertretung und Fristen.')}
-                      {(f.notizen?.length ?? 0) > 120 ? '…' : ''}
+                      {(() => {
+                        const raw = fallNeuesteNotizText(f);
+                        if (raw)
+                          return raw.length > 120 ? `${raw.slice(0, 120)}…` : raw;
+                        const descMap: Record<string, string> = {
+                          verkehrsrecht: 'Verkehrsrechtssache — Schadenregulierung und Gutachten.',
+                          arbeitsrecht: 'Arbeitsrechtssache — Mandantenvertretung und Fristen.',
+                          zivilrecht: 'Zivilrechtssache — Forderung oder Vertrag.',
+                          insolvenzrecht: 'Insolvenzrechtssache — Forderungsanmeldung.',
+                          wettbewerbsrecht: 'Wettbewerbsrechtssache — UWG / Abmahnung.',
+                          erbrecht: 'Erbrechtssache — Nachlass und Ansprüche.',
+                        };
+                        return descMap[f.rechtsgebiet] ?? 'Rechtsangelegenheit.';
+                      })()}
                     </Typography>
                     <Stack direction="row" spacing={-0.5}>
                       <Avatar
